@@ -54,6 +54,7 @@ class Polygon {
 
 class PolygonLayer extends StatelessWidget {
   final List<Polygon> polygons;
+  final bool paintLabel;
 
   /// screen space culling of polygons based on bounding box
   final bool polygonCulling;
@@ -62,6 +63,7 @@ class PolygonLayer extends StatelessWidget {
     super.key,
     this.polygons = const [],
     this.polygonCulling = false,
+    this.paintLabel = false,
   }) {
     if (polygonCulling) {
       for (final polygon in polygons) {
@@ -106,7 +108,8 @@ class PolygonLayer extends StatelessWidget {
           polygonsWidget.add(
             CustomPaint(
               key: polygon.key,
-              painter: PolygonPainter(polygon, map.rotationRad),
+              painter: PolygonPainter(polygon, map.rotationRad,
+                  paintLabel: paintLabel),
               size: size,
             ),
           );
@@ -133,8 +136,9 @@ class PolygonLayer extends StatelessWidget {
 class PolygonPainter extends CustomPainter {
   final Polygon polygonOpt;
   final double rotationRad;
+  final bool paintLabel;
 
-  PolygonPainter(this.polygonOpt, this.rotationRad);
+  PolygonPainter(this.polygonOpt, this.rotationRad, {this.paintLabel = true});
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -250,7 +254,7 @@ class PolygonPainter extends CustomPainter {
 
       _paintBorder(canvas);
 
-      if (polygonOpt.label != null) {
+      if (polygonOpt.label != null && paintLabel) {
         Label.paintText(
           canvas,
           polygonOpt.offsets,
